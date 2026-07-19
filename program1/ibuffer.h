@@ -1,7 +1,6 @@
 #ifndef IBUFFER_H
 #define IBUFFER_H
 
-#include <iostream>
 #include <string>
 
 class IBuffer {

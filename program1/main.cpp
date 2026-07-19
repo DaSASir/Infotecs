@@ -2,16 +2,17 @@
 #include "Producer.h"
 #include "Consumer.h"
 
+#include <thread>   
+
 int main() {
 
     Buffer buffer;
     Consumer consumer(buffer);
     Producer producer(buffer);
 
-    std::thread producerThread(std::ref(producer));
     std::thread consumerThread(std::ref(consumer));
 
-    producerThread.join();
+    producer();
     consumerThread.join();
 
     return 0;

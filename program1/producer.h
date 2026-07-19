@@ -2,7 +2,7 @@
 #define PRODUCER_H
 
 #include "IBuffer.h"
-#include "../../../library/library.h"
+#include "../../library/library.h"
 
 class Producer {
 public:

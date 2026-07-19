@@ -2,15 +2,14 @@
 #define BUFFER_H
 
 #include "IBuffer.h"
-#include <queue>
 
+#include <queue>
 #include <mutex>
 #include <condition_variable>
 
 class Buffer : public IBuffer {
 public:
     Buffer() = default;
-
     void push(const std::string& data) override;
     std::string pop() override;
 
