@@ -6,12 +6,13 @@ void sortAndReplace(std::string& input) {
 
 	std::sort(input.rbegin(), input.rend());
 
-	std::string result = input;
+	std::string result;
 
 	for (char i : input) {
-		if (std::isdigit(i) && i % 2 == 0) {
-			result.replace(result.find(i), 1, "KB");
-		}
+		if (std::isdigit(static_cast<unsigned char>(i)) && (i - '0') % 2 == 0)
+			result += "KB";
+		else
+			result += i;
 	}
 
 	input = result;
@@ -21,7 +22,7 @@ int getSum(const std::string& input) {
 	int sum = 0;
 
 	for (char i : input) {
-		if (std::isdigit(i)) {
+		if (std::isdigit(static_cast<unsigned char>(i))) {
 			sum += i - '0';
 		}
 	}
@@ -30,8 +31,8 @@ int getSum(const std::string& input) {
 }
 
 bool analyseOfSymbols(const std::string& input) {
-	for (char c : input) {
-		if (!std::isdigit(c)) 
+	for (char i : input) {
+		if (!std::isdigit(static_cast<unsigned char>(i)))
 			return false;
 	}
 
