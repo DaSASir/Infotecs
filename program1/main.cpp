@@ -2,6 +2,8 @@
 #include "producer.h"
 #include "consumer.h"
 
+#include <thread>
+
 int main() {
 
     Buffer buffer;

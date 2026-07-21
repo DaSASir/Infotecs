@@ -11,7 +11,7 @@ class Buffer : public IBuffer {
 public:
     Buffer() = default;
 
-    void push(std::string& data) override;
+    void push(std::string data) override;
     std::string pop() override;
 
 private:

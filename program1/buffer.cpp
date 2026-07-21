@@ -1,6 +1,6 @@
-#include "Buffer.h"
+#include "buffer.h"
 
-void Buffer::push(std::string& data) {
+void Buffer::push(std::string data) {
     std::unique_lock<std::mutex> lock(m_mutex);
     m_bufferQueue.push(std::move(data));
     m_cv.notify_one();

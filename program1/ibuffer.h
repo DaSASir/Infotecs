@@ -7,7 +7,7 @@ class IBuffer {
 public:
     virtual ~IBuffer() = default;
 
-    virtual void push(std::string& data) = 0;
+    virtual void push(std::string data) = 0;
     virtual std::string pop() = 0;
 };
 
