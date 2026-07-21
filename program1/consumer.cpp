@@ -1,4 +1,4 @@
-#include "Consumer.h"
+#include "consumer.h"
 #include "../library/library.h"
 
 #include <iostream>

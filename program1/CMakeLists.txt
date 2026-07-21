@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 3.16)
 
 add_executable(program1
     main.cpp
-    Buffer.cpp
-    Buffer.h
-    Producer.cpp
-    Producer.h
-    Consumer.cpp
-    Consumer.h
-    IBuffer.h
+    buffer.cpp
+    buffer.h
+    producer.cpp
+    producer.h
+    consumer.cpp
+    consumer.h
+    ibuffer.h
 )
 
 target_link_libraries(program1 PRIVATE my_library)
