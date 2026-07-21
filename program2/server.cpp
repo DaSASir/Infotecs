@@ -1,11 +1,14 @@
 #include "Server.h"
+#include "../library/library.h"
+
 #include <iostream>
 #include <thread>
 #include <chrono>
-#include "../library/library.h"
 
 Server::Server(uint16_t port)
-    : m_port(port), m_listenSocket(INVALID_SOCKET_VAL), m_clientSocket(INVALID_SOCKET_VAL) {
+    : m_port(port), 
+    m_listenSocket(INVALID_SOCKET_VAL), 
+    m_clientSocket(INVALID_SOCKET_VAL) {
 #ifdef _WIN32
     WSADATA wsa;
     WSAStartup(MAKEWORD(2, 2), &wsa);
@@ -21,9 +24,11 @@ Server::~Server() {
 
 bool Server::init() {
     m_listenSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (m_listenSocket == INVALID_SOCKET_VAL) return false;
+    if (m_listenSocket == INVALID_SOCKET_VAL) 
+        return false;
 
     int opt = 1;
+
 #ifdef _WIN32
     setsockopt(m_listenSocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&opt), sizeof(opt));
 #else
@@ -47,6 +52,7 @@ bool Server::init() {
 bool Server::acceptConnection() {
     closeClient();
     sockaddr_in clientAddr{};
+
 #ifdef _WIN32
     int addrLen = sizeof(clientAddr);
     m_clientSocket = accept(m_listenSocket, reinterpret_cast<struct sockaddr*>(&clientAddr), &addrLen);
@@ -54,6 +60,7 @@ bool Server::acceptConnection() {
     socklen_t linuxAddrLen = sizeof(clientAddr);
     m_clientSocket = accept(m_listenSocket, reinterpret_cast<struct sockaddr*>(&clientAddr), &linuxAddrLen);
 #endif
+
     return m_clientSocket != INVALID_SOCKET_VAL;
 }
 
@@ -70,7 +77,9 @@ bool Server::receiveMessage(std::string& outMessage) {
 }
 
 void Server::operator()() {
-    if (!init()) return;
+    if (!init()) 
+        return;
+
     while (true) {
         std::cout << "Waiting program1..." << std::endl;
 
@@ -82,14 +91,12 @@ void Server::operator()() {
         std::cout << "Program1 connected" << std::endl;
         std::string receivedData;
 
-        while (receiveMessage(receivedData)) {
-            if (analyseOfSymbols(receivedData)) {
+        while (receiveMessage(receivedData))
+            if (analyseOfSymbols(receivedData))
                 std::cout << "Good function3:" << receivedData << std::endl;
-            }
-            else {
+            else
                 std::cout << "Error function3:" << receivedData << std::endl;
-            }
-        }
+
         std::cout << "Disconnected. Wait..." << std::endl;
         closeClient();
     }

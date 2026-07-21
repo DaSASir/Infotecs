@@ -28,15 +28,16 @@ public:
     void operator()();
 
 private:
-    uint16_t m_port;
-    socket_t m_listenSocket;
-    socket_t m_clientSocket;
-
     bool init();
     bool acceptConnection();
     bool receiveMessage(std::string& outMessage);
     void closeClient();
     void stop();
+
+private:
+    uint16_t m_port;
+    socket_t m_listenSocket;
+    socket_t m_clientSocket;
 };
 
 #endif // SERVER_H

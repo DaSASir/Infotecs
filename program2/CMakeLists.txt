@@ -1,0 +1,19 @@
+cmake_minimum_required(VERSION 3.16)
+
+add_executable(program2
+    main.cpp
+    Server.cpp
+    Server.h
+)
+
+target_link_libraries(program2 PRIVATE my_library)
+
+if(WIN32)
+    target_link_libraries(program2 PRIVATE ws2_32)
+endif()
+
+add_custom_command(TARGET program2 POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_FILE:my_library>
+    $<TARGET_FILE_DIR:program2>
+)
