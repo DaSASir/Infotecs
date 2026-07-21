@@ -1,5 +1,7 @@
 #include "Producer.h"
+#include "../library/library.h"
 
+#include <iostream>
 #include <algorithm>
 
 Producer::Producer(IBuffer& buffer) 
@@ -16,7 +18,8 @@ void Producer::operator()() {
     std::string input;
     std::cout << "Write ur string: ";
     while (true) {
-        if (!std::getline(std::cin, input)) break;
+        if (!std::getline(std::cin, input)) 
+            break;
 
         if (input == "-") {
             m_buffer.push("-");

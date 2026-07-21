@@ -1,8 +1,6 @@
 #ifndef LIBRARY_H
 #define LIBRARY_H
 
-#include <iostream>
-#include <algorithm>
 #include <string>
 
 //function number 1

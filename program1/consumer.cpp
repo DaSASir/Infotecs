@@ -1,5 +1,5 @@
 #include "Consumer.h"
-#include "../../library/library.h"
+#include "../library/library.h"
 
 #include <iostream>
 #include <thread>
@@ -27,9 +27,9 @@ Consumer::Consumer(IBuffer& buffer)
 }
 
 Consumer::~Consumer() {
-    if (m_serverSocket != INVALID_SOCKET_VAL) {
+    if (m_serverSocket != INVALID_SOCKET_VAL)
         close_socket(m_serverSocket);
-    }
+
 #ifdef _WIN32
     WSACleanup();
 #endif
@@ -42,9 +42,8 @@ bool Consumer::connectToServer() {
     }
 
     m_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (m_serverSocket == INVALID_SOCKET_VAL) {
+    if (m_serverSocket == INVALID_SOCKET_VAL)
         return false;
-    }
 
     sockaddr_in serverAddr{};
     serverAddr.sin_family = AF_INET;
@@ -67,7 +66,8 @@ void Consumer::operator()() {
     while (true) {
         std::string data = m_buffer.pop();
 
-        if (data == "-") break;
+        if (data == "-") 
+            break;
 
         std::cout << "\nGet from buffer: " << data << std::endl;
 
@@ -75,9 +75,8 @@ void Consumer::operator()() {
 
         std::string message = std::to_string(sum) + "\n";
 
-        if (!isConnected) {
+        if (!isConnected)
             isConnected = connectToServer();
-        }
 
         if (isConnected) {
             int bytesSent = send(m_serverSocket, message.c_str(), static_cast<int>(message.length()), 0);

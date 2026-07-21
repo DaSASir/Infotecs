@@ -2,7 +2,6 @@
 #define CONSUMER_H
 
 #include "IBuffer.h"
-#include "../../library/library.h"
 
 #ifdef _WIN32
     #include <winsock2.h>
@@ -18,10 +17,11 @@ public:
     void operator()();
 
 private:
+    bool connectToServer();
+
+private:
     IBuffer& m_buffer;
     socket_t m_serverSocket;
-
-    bool connectToServer();
 };
 
 #endif // CONSUMER_H
