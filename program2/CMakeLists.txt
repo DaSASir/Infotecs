@@ -2,8 +2,11 @@ cmake_minimum_required(VERSION 3.16)
 
 add_executable(program2
     main.cpp
-    Server.cpp
-    Server.h
+    server.cpp
+    server.h 
+    idataprocessor.h 
+    dataprocessor.h 
+    dataprocessor.cpp
 )
 
 target_link_libraries(program2 PRIVATE my_library)

@@ -1,7 +1,12 @@
-#include "Server.h"
+#include "server.h"
+#include "dataprocessor.h"
 
 int main() {
-    Server server(8080);
-    server();
+    DataProcessor processor;
+
+    Server server(8080, processor);
+
+    server.run();
+
     return 0;
 }

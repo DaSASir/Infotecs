@@ -1,33 +1,44 @@
-#include "Server.h"
-#include "../library/library.h"
+#include "server.h"
 
 #include <iostream>
 #include <thread>
 #include <chrono>
 
-Server::Server(uint16_t port)
-    : m_port(port), 
-    m_listenSocket(INVALID_SOCKET_VAL), 
-    m_clientSocket(INVALID_SOCKET_VAL) {
+namespace {
 #ifdef _WIN32
-    WSADATA wsa;
-    WSAStartup(MAKEWORD(2, 2), &wsa);
+    constexpr socket_t INVALID_SOCKET_VAL = INVALID_SOCKET;
+    inline void close_native_socket(socket_t s) { closesocket(s); }
+#else
+    constexpr socket_t INVALID_SOCKET_VAL = -1;
+    inline void close_native_socket(socket_t s) { ::close(s); }
+#endif
+}
+
+Server::Server(uint16_t port, IDataProcessor& processor)
+    : m_port(port),
+    m_listenSocket(INVALID_SOCKET_VAL),
+    m_clientSocket(INVALID_SOCKET_VAL),
+    m_processor(processor)
+{
+#ifdef _WIN32
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
 #endif
 }
 
 Server::~Server() {
-    stop();
+    m_cleanupSockets();
 #ifdef _WIN32
     WSACleanup();
 #endif
 }
 
-bool Server::init() {
+bool Server::m_initServer() {
     m_listenSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (m_listenSocket == INVALID_SOCKET_VAL) 
+    if (m_listenSocket == INVALID_SOCKET_VAL)
         return false;
 
-    int opt = 1;
+    const int opt = 1;
 
 #ifdef _WIN32
     setsockopt(m_listenSocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&opt), sizeof(opt));
@@ -40,79 +51,81 @@ bool Server::init() {
     serverAddr.sin_addr.s_addr = INADDR_ANY;
     serverAddr.sin_port = htons(m_port);
 
-    if (bind(m_listenSocket, reinterpret_cast<struct sockaddr*>(&serverAddr), sizeof(serverAddr)) < 0) 
+    if (bind(m_listenSocket, reinterpret_cast<struct sockaddr*>(&serverAddr), sizeof(serverAddr)) < 0)
         return false;
 
-    if (listen(m_listenSocket, 3) < 0) 
+    if (listen(m_listenSocket, 5) < 0)
         return false;
 
     return true;
 }
 
-bool Server::acceptConnection() {
-    closeClient();
+bool Server::m_acceptClient() {
+    m_closeClientSocket();
     sockaddr_in clientAddr{};
 
 #ifdef _WIN32
     int addrLen = sizeof(clientAddr);
     m_clientSocket = accept(m_listenSocket, reinterpret_cast<struct sockaddr*>(&clientAddr), &addrLen);
 #else
-    socklen_t linuxAddrLen = sizeof(clientAddr);
-    m_clientSocket = accept(m_listenSocket, reinterpret_cast<struct sockaddr*>(&clientAddr), &linuxAddrLen);
+    socklen_t addrLen = sizeof(clientAddr);
+    m_clientSocket = accept(m_listenSocket, reinterpret_cast<struct sockaddr*>(&clientAddr), &addrLen);
 #endif
 
     return m_clientSocket != INVALID_SOCKET_VAL;
 }
 
-bool Server::receiveMessage(std::string& outMessage) {
+bool Server::m_readLine(std::string& outMessage) {
     outMessage.clear();
-    char buffer[1];
+    char ch;
+
     while (true) {
-        int bytesRead = recv(m_clientSocket, buffer, 1, 0);
-        if (bytesRead <= 0) return false;
-        if (buffer[0] == '\n') break;
-        if (buffer[0] != '\r') outMessage += buffer[0];
+        int bytesRead = recv(m_clientSocket, &ch, 1, 0);
+
+        if (bytesRead <= 0)
+            return false;
+        if (ch == '\n')
+            break;
+        if (ch != '\r')
+            outMessage += ch;
     }
     return true;
 }
 
-void Server::operator()() {
-    if (!init()) 
+void Server::run() {
+    if (!m_initServer())
         return;
 
     while (true) {
-        std::cout << "Waiting program1..." << std::endl;
+        std::cout << "Wait program1..." << std::endl;
 
-        if (!acceptConnection()) {
+        if (!m_acceptClient()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
             continue;
         }
 
-        std::cout << "Program1 connected" << std::endl;
+        std::cout << std::endl << "Program1 connected" << std::endl;
         std::string receivedData;
 
-        while (receiveMessage(receivedData))
-            if (analyseOfSymbols(receivedData))
-                std::cout << "Good function3:" << receivedData << std::endl;
-            else
-                std::cout << "Error function3:" << receivedData << std::endl;
+        while (m_readLine(receivedData))
+            m_processor.process(receivedData);
 
-        std::cout << "Disconnected. Wait..." << std::endl;
-        closeClient();
+        std::cout << std::endl << "Program1 disconnected" << std::endl;
+        m_closeClientSocket();
     }
 }
 
-void Server::closeClient() {
+void Server::m_closeClientSocket() {
     if (m_clientSocket != INVALID_SOCKET_VAL) {
-        close_socket(m_clientSocket);
+        close_native_socket(m_clientSocket);
         m_clientSocket = INVALID_SOCKET_VAL;
     }
 }
 
-void Server::stop() {
-    closeClient();
+void Server::m_cleanupSockets() {
+    m_closeClientSocket();
     if (m_listenSocket != INVALID_SOCKET_VAL) {
-        close_socket(m_listenSocket);
+        close_native_socket(m_listenSocket);
         m_listenSocket = INVALID_SOCKET_VAL;
     }
 }
