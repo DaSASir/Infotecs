@@ -1,6 +1,6 @@
-#include "Buffer.h"
-#include "Producer.h"
-#include "Consumer.h"
+#include "buffer.h"
+#include "producer.h"
+#include "consumer.h"
 
 int main() {
 

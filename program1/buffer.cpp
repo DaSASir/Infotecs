@@ -1,8 +1,8 @@
 #include "Buffer.h"
 
-void Buffer::push(const std::string& data) {
+void Buffer::push(std::string& data) {
     std::unique_lock<std::mutex> lock(m_mutex);
-    m_bufferQueue.push(data);
+    m_bufferQueue.push(std::move(data));
     m_cv.notify_one();
 }
 
@@ -13,7 +13,7 @@ std::string Buffer::pop() {
             return !m_bufferQueue.empty(); 
         });
 
-    std::string data = m_bufferQueue.front();
+    std::string data = std::move(m_bufferQueue.front());
     m_bufferQueue.pop();
     return data;
 }

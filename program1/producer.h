@@ -1,7 +1,7 @@
 #ifndef PRODUCER_H
 #define PRODUCER_H
 
-#include "IBuffer.h"
+#include "ibuffer.h"
 
 class Producer {
 public:
@@ -9,7 +9,7 @@ public:
 	void operator()();
 
 private:
-	bool isValidInput(const std::string& str);
+	bool isValidInput(const std::string& str) const;
 
 private:
 	IBuffer& m_buffer;

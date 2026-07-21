@@ -1,7 +1,7 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-#include "IBuffer.h"
+#include "ibuffer.h"
 
 #include <queue>
 #include <mutex>
@@ -10,7 +10,8 @@
 class Buffer : public IBuffer {
 public:
     Buffer() = default;
-    void push(const std::string& data) override;
+
+    void push(std::string& data) override;
     std::string pop() override;
 
 private:
