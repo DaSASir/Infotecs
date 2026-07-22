@@ -91,7 +91,5 @@ void Consumer::operator()() {
             else
                 std::cout << "Data go to Program2" << std::endl;
         }
-
-        std::cout << std::endl << "Write ur string: ";
     }
 }

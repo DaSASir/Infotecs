@@ -92,7 +92,7 @@ bool Server::m_readLine(std::string& outMessage) {
     return true;
 }
 
-void Server::run() {
+void Server::operator()() {
     if (!m_initServer())
         return;
 

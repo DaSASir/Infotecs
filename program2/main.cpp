@@ -3,10 +3,9 @@
 
 int main() {
     DataProcessor processor;
-
     Server server(8080, processor);
 
-    server.run();
+    server();
 
     return 0;
 }

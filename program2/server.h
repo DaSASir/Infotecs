@@ -23,7 +23,7 @@ public:
     explicit Server(uint16_t port, IDataProcessor& processor);
     ~Server();
 
-    void run();
+    void operator()();
 
 private:
     bool m_initServer();

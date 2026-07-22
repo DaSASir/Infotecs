@@ -9,7 +9,7 @@ public:
 	void operator()();
 
 private:
-	bool isValidInput(const std::string& str) const;
+	bool m_isValidInput(const std::string& str) const;
 
 private:
 	IBuffer& m_buffer;

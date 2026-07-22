@@ -8,7 +8,7 @@
 Producer::Producer(IBuffer& buffer) 
     : m_buffer(buffer) {}
 
-bool Producer::isValidInput(const std::string& str) const{
+bool Producer::m_isValidInput(const std::string& str) const{
     if (str.empty() || str.length() > 64)
         return false;
 
@@ -27,7 +27,7 @@ void Producer::operator()() {
             break;
         }
 
-        if (!isValidInput(input)) {
+        if (!m_isValidInput(input)) {
             std::cout << "ERROR." << std::endl;
             std::cout << std::endl << "Write ur string: ";
             continue;
@@ -35,5 +35,7 @@ void Producer::operator()() {
 
         sortAndReplace(input);
         m_buffer.push(std::move(input));
+
+        std::cout << std::endl << "Write ur string: ";
     }
 }
